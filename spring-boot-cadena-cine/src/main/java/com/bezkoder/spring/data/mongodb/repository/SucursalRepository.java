@@ -6,6 +6,7 @@
 package com.bezkoder.spring.data.mongodb.repository;
 
 import com.bezkoder.spring.data.mongodb.model.Sucursal;
+import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
@@ -14,6 +15,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface SucursalRepository extends MongoRepository<Sucursal, String> {
 
+    List<Sucursal> findByNombreContaining(String nombre);
 
-    
 }

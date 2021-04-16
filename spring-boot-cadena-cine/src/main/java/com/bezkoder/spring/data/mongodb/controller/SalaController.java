@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bezkoder.spring.data.mongodb.repository.SucursalRepository;
 import com.bezkoder.spring.data.mongodb.repository.TipoSalaRepository;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -65,11 +69,31 @@ public class SalaController {
     public ResponseEntity<TipoSala> createTipoSala(@RequestBody TipoSala tipoSala) {
         try {
 
-            TipoSala _tipoSala = tipoSalaRepository.save(new TipoSala(tipoSala.getNombre()));
+            TipoSala _tipoSala = tipoSalaRepository.save(new TipoSala(tipoSala.getNombre().toUpperCase()));
             return new ResponseEntity<>(_tipoSala, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    
+    @GetMapping("/tipoSala/all")
+    public ResponseEntity<List<TipoSala>> getAllTipoSala(@RequestParam(required = false) String nombre) {
+        try {
+            List<TipoSala> tipoSalas = new ArrayList<TipoSala>();
+            if (nombre == null) {
+                tipoSalaRepository.findAll().forEach(tipoSalas::add);
+            } else {
+                tipoSalaRepository.findByNombreContaining(nombre.toUpperCase()).forEach(tipoSalas::add);
+            }
+            if (tipoSalas.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(tipoSalas, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

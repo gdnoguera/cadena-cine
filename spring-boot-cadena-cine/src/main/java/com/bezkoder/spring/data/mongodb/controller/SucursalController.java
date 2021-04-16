@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bezkoder.spring.data.mongodb.repository.SucursalRepository;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -34,6 +38,24 @@ public class SucursalController {
         try {
             Sucursal _sucursal = sucursalRepository.save(new Sucursal(sucursal.getNombre(), sucursal.getDireccion(), sucursal.getAdministrador()));
             return new ResponseEntity<>(_sucursal, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sucursal/all")
+    public ResponseEntity<List<Sucursal>> getAllSucursal(@RequestParam(required = false) String nombre) {
+        try {
+            List<Sucursal> sucursales = new ArrayList<Sucursal>();
+            if (nombre == null) {
+                sucursalRepository.findAll().forEach(sucursales::add);
+            } else {
+                sucursalRepository.findByNombreContaining(nombre).forEach(sucursales::add);
+            }
+            if (sucursales.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(sucursales, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

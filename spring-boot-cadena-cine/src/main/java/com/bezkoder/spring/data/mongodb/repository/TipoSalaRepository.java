@@ -5,8 +5,8 @@
  */
 package com.bezkoder.spring.data.mongodb.repository;
 
-
 import com.bezkoder.spring.data.mongodb.model.TipoSala;
+import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface TipoSalaRepository extends MongoRepository<TipoSala, String> {
 
+    List<TipoSala> findByNombreContaining(String nombre);
 
-    
 }
